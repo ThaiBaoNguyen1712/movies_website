@@ -23,6 +23,6 @@
 </section>
 
 <section>
-    <img src="https://phimcom.io.vn/uploads/viewClient.jpg" alt="View layout client">
-    View layout client
+    <h2>Website Domain : </h2>
+    <p>[https:](https://phimcom.io.vn/)</p>
 </section>
