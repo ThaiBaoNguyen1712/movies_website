@@ -20,4 +20,5 @@
         </p>
     </section>
 
-![Uploading image.png…]()
+    <img src="https://phimcom.io.vn/uploads/viewClient.jpg" alt="Mô tả ảnh">
+
