@@ -19,3 +19,5 @@
             As a Full Stack Developer, I took responsibility for both frontend and backend development, database management, API integration, and ensuring a high-quality user experience. This helped create a diverse and engaging movie streaming website for users.
         </p>
     </section>
+
+![Uploading image.png…]()
