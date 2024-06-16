@@ -6,6 +6,7 @@
     <h2>About the Project</h2>
     <p>
         The movie streaming platform I developed offers users a flexible and convenient online platform to explore various entertainment content. Built on Laravel and Bootstrap 5, the website features a modern and user-friendly interface.
+        Using Laravel 8.0.2, Auth Brezee
     </p>
     <p>
         Leveraging jQuery technology, the website provides smooth and interactive user experiences. Powered by SQL Server and Entity Framework, it ensures robust and stable data management, ensuring consistency and security for user data.
