@@ -1,29 +1,45 @@
-<header>
-    <h1>Movie Streaming Website</h1>
-</header>
+<div align="center">
+  <h1>🎬 Movie Streaming Website</h1>
+  <p>A modern, user-friendly platform for online entertainment</p>
+  <img src="https://img.shields.io/badge/Laravel-8.0.2-FF2D20?style=for-the-badge&logo=laravel&logoColor=white" alt="Laravel 8.0.2"/>
+  <img src="https://img.shields.io/badge/Bootstrap-5-7952B3?style=for-the-badge&logo=bootstrap&logoColor=white" alt="Bootstrap 5"/>
+  <img src="https://img.shields.io/badge/jQuery-0769AD?style=for-the-badge&logo=jquery&logoColor=white" alt="jQuery"/>
+  <img src="https://img.shields.io/badge/SQL_Server-CC2927?style=for-the-badge&logo=microsoft-sql-server&logoColor=white" alt="SQL Server"/>
+</div>
 
-<section>
-    <h2>About the Project</h2>
-    <p>
-        The movie streaming platform I developed offers users a flexible and convenient online platform to explore various entertainment content. Built on Laravel and Bootstrap 5, the website features a modern and user-friendly interface.
-        Using Laravel 8.0.2, Auth Brezee
-    </p>
-    <p>
-        Leveraging jQuery technology, the website provides smooth and interactive user experiences. Powered by SQL Server and Entity Framework, it ensures robust and stable data management, ensuring consistency and security for user data.
-    </p>
-    <p>
-        Features such as search, filtering, and movie suggestions make it easy for users to find their favorite content.
-    </p>
-</section>
+<hr>
 
-<section>
-    <h2>My Responsibilities</h2>
-    <p>
-        As a Full Stack Developer, I took responsibility for both frontend and backend development, database management, API integration, and ensuring a high-quality user experience. This helped create a diverse and engaging movie streaming website for users.
-    </p>
-</section>
+## 🚀 About the Project
 
-<section>
-    <h2>Website Domain : </h2>
-    <p>[https:](https://phimcom.io.vn/)</p>
-</section>
+The movie streaming platform I developed offers users a flexible and convenient online platform to explore various entertainment content. Built with cutting-edge technologies, the website features:
+
+- 🎨 Modern and user-friendly interface using **Laravel 8.0.2** and **Bootstrap 5**
+- 🔐 Secure authentication with **Laravel Breeze**
+- 💻 Smooth and interactive user experiences powered by **jQuery**
+- 🗃️ Robust and stable data management with **SQL Server** and **Entity Framework**
+
+Key features include:
+- 🔍 Advanced search and filtering
+- 🎥 Personalized movie suggestions
+- 📱 Responsive design for all devices
+
+## 💼 My Responsibilities
+
+As a Full Stack Developer, my role encompassed:
+- 🖥️ Frontend Development
+- ⚙️ Backend Development
+- 🗄️ Database Management
+- 🔗 API Integration
+- 🌟 Ensuring High-Quality User Experience
+
+This comprehensive approach resulted in a diverse and engaging movie streaming website for users.
+
+## 🌐 Website
+
+Visit our platform: [https://phimcom.io.vn/](https://phimcom.io.vn/)
+
+<hr>
+
+<div align="center">
+  <p>Developed with ❤️ by [Your Name]</p>
+</div>
