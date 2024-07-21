@@ -41,5 +41,5 @@ Visit our platform: [https://phimcom.io.vn/](https://phimcom.io.vn/)
 <hr>
 
 <div align="center">
-  <p>Developed with ❤️ by [Your Name]</p>
+  <p>Developed with ❤️ by Bao Nguyen</p>
 </div>
