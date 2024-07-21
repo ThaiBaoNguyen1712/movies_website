@@ -16,7 +16,7 @@ The movie streaming platform I developed offers users a flexible and convenient 
 - 🎨 Modern and user-friendly interface using **Laravel 8.0.2** and **Bootstrap 5**
 - 🔐 Secure authentication with **Laravel Breeze**
 - 💻 Smooth and interactive user experiences powered by **jQuery**
-- 🗃️ Robust and stable data management with **SQL Server** and **Entity Framework**
+- 🗃️ Robust and stable data management with **MySQL** and **Eloquent**
 
 Key features include:
 - 🔍 Advanced search and filtering
