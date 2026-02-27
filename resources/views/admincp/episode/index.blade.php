@@ -9,8 +9,23 @@
 
                 <div class="card-header">Quản lý tập phim</div>
 
-                
-                <table id="myTable" class="table table-hover">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <form action="{{ Request::url() }}" method="GET" class="form-inline">
+                            <div class="input-group">
+                                <input type="text" name="search" value="{{ $search }}" 
+                                      class="form-control" placeholder="Nhập số tập hoặc tên phim...">
+                                <div class="input-group-append">
+                                    <button class="btn btn-primary" type="submit">Tìm kiếm</button>
+                                    @if($search)
+                                        <a href="{{ Request::url() }}" class="btn btn-danger">Xóa lọc</a>
+                                    @endif
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <table class="table table-hover">
                     <thead>
                       <tr>
                         <th scope="col">STT</th>
@@ -33,12 +48,12 @@
                         $image_check = substr($episode->movie->image,0,5);   
                        @endphp
                       @if($image_check =='https')
-                      <td> <figure><img class="lazy img-responsive" src="{{$episode->movie->image}}"style="max-width:66%"></figure> </td>
+                      <td> <figure><img class="lazy img-responsive" src="{{$episode->movie->image}}"style="max-width:66px"></figure> </td>
                   
                       @else
                       <td> 
                         <figure>
-                            <img class="lazy img-responsive small-image" src="{{ asset('uploads/movies/'.$episode->movie->image)}}" alt="" style="max-width:66%">
+                            <img class="lazy img-responsive small-image" src="{{ asset('uploads/movies/'.$episode->movie->image)}}" alt="" style="max-width:66px">
                         </figure>
                     </td>
                     
@@ -66,6 +81,9 @@
                       @endforeach
                     </tbody>
                   </table>
+                  <div class="mt-4 text-center">
+                      {!! $list_episode->appends(['search' => $search])->links('pagination::bootstrap-4') !!}
+                  </div>
             </div>
         </div>
     </div>

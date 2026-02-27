@@ -1,47 +1,98 @@
 <!DOCTYPE html>
 <html lang="vi">
-   <head>
-      <meta charset="utf-8" />
-      <meta content="width=device-width,initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
-      <meta name="theme-color" content="#234556">
-      <meta http-equiv="Content-Language" content="vi" />
-      <meta content="VN" name="geo.region" />
-      <meta name="DC.language" scheme="utf-8" content="vi" />
-      <meta name="language" content="Việt Nam">
-      
+ <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width,initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
+    <meta name="theme-color" content="#234556">
+    <meta http-equiv="Content-Language" content="vi" />
+    <meta content="VN" name="geo.region" />
+    <meta name="DC.language" scheme="utf-8" content="vi" />
+    <meta name="language" content="Việt Nam">
+    <link rel="icon" href="/uploads/logo/logo9942.png" type="image/png">
 
-      <link rel="shortcut icon" href="https://www.pngkey.com/png/detail/360-3601772_your-logo-here-your-company-logo-here-png.png" type="image/x-icon" />
-      <meta name="revisit-after" content="1 days" />
-      <meta name='robots' content='index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' />
-      <title>Phim hay - Xem phim hay nhất tại PHIM CƠM </title>
-      <meta name="description" content="Phim Cơm  - Xem phim hay nhất, xem phim online miễn phí, phim hot , phim nhanh" />
-      <link rel="canonical" href="">
-      <link rel="next" href="" />
-      <meta property="og:locale" content="vi_VN" />
-      <meta property="og:title" content="Phim Cơm  - Xem phim hay nhất" />
-      <meta property="og:description" content="Phim Cơm  - Xem phim hay nhất, phim hay trung quốc, hàn quốc, việt nam, mỹ, hong kong , chiếu rạp" />
-      <meta property="og:url" content="" />
-      <meta property="og:site_name" content="Phim Cơm - Xem phim hay nhất" />
-      <meta property="og:image" content="" />
-      <meta property="og:image:width" content="300" />
-      <meta property="og:image:height" content="55" />
-      <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
-     
-      <link rel='dns-prefetch' href='//s.w.org' />
-      
-      <link rel='stylesheet' id='bootstrap-css' href='{{ asset('client/css/bootstrap.min.css?ver=5.7.2') }}' media='all' />
-      <link rel='stylesheet' id='style-css' href='{{ asset('client/css/style.css?ver=5.7.2') }}' media='all' />
-      <link rel='stylesheet' id='wp-block-library-css' href='{{ asset('client/css/style.min.css?ver=5.7.2') }}' media='all' />
-      <script type='text/javascript' src='{{ asset('client/js/jquery.min.js?ver=5.7.2') }}' id='halim-jquery-js'></script>
-      
-      <style type="text/css" id="wp-custom-css">
-         .textwidget p a img {
-         width: 100%;
-         }
-      </style>
-     
-   </head>
-   <body class="home blog halimthemes halimmovies" data-masonry="">
+    <!-- Preconnect to external domains -->
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://maxcdn.bootstrapcdn.com">
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="https://maxcdn.bootstrapcdn.com">
+    <link rel='dns-prefetch' href='//s.w.org' />
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="{{ asset('client/css/bootstrap.min.css?ver=5.7.2') }}" as="style">
+    <link rel="preload" href="{{ asset('client/css/style.css?ver=5.7.2') }}" as="style">
+    <link rel="preload" href="{{ asset('client/js/jquery.min.js?ver=5.7.2') }}" as="script">
+    <link rel="preload" href="{{ asset('uploads/logo/'.$info->logo) }}" as="image">
+    
+    <!-- preconnect to img domain -->
+    <link rel="preconnect" href="https://img.ophim.live">
+    <link rel="dns-prefetch" href="https://img.ophim.live">
+
+    <link rel="preconnect" href="https://phimimg.com">
+    <link rel="dns-prefetch" href="https://phimimg.com">
+    <!-- Critical CSS -->
+    <link rel='stylesheet' id='bootstrap-css' href='{{ asset('client/css/bootstrap.min.css?ver=5.7.2') }}' media='all' />
+    <link rel='stylesheet' id='style-css' href='{{ asset('client/css/style.css?ver=5.7.2') }}' media='all' />
+    <link rel='stylesheet' id='wp-block-library-css' href='{{ asset('client/css/style.min.css?ver=5.7.2') }}' media='all' />
+    <link rel="stylesheet" href="{{ asset('client/css/mobile-fix.css') }}">
+    
+    <!-- Defer non-critical CSS -->
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"></noscript>
+    
+    <link rel="preload" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css"></noscript>
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css"></noscript>
+    
+    <!-- Preload critical JS -->
+    <script type='text/javascript' src='{{ asset('client/js/jquery.min.js?ver=5.7.2') }}' id='halim-jquery-js'></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+    
+    <link rel="shortcut icon" href="https://www.pngkey.com/png/detail/360-3601772_your-logo-here-your-company-logo-here-png.png" type="image/x-icon" />
+    <meta name="revisit-after" content="1 days" />
+    <meta name='robots' content='index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' />
+    
+    <title>Phim hay - Xem phim hay nhất tại PHIM CƠM </title>
+    <meta name="description" content="Phim Cơm  - Xem phim hay nhất, xem phim online miễn phí, phim hot , phim nhanh" />
+    <link rel="canonical" href="">
+    <link rel="next" href="" />
+    
+    <meta property="og:locale" content="vi_VN" />
+    <meta property="og:title" content="Phim Cơm – Xem phim online HD, Vietsub nhanh nhất" />
+    <meta property="og:description" content="Phim Cơm – Xem phim online miễn phí chất lượng HD, Vietsub & Thuyết minh. Tổng hợp phim Trung Quốc, Hàn Quốc, Việt Nam, Mỹ, phim chiếu rạp cập nhật nhanh." />
+    <meta property="og:url" content="" />
+    <meta property="og:site_name" content="Phim Cơm - Xem phim hay nhất" />
+    <meta property="og:image" content="https://phimcom.io.vn/uploads/logo/logo9942.png">
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Phim Cơm – Xem phim online HD miễn phí" />
+    <!-- Inline critical CSS -->
+    <style type="text/css" id="wp-custom-css">
+        .textwidget p a img {
+            width: 100%;
+        }
+        
+        /* Performance Optimization - Critical */
+        * {
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        html {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        body {
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        img {
+            content-visibility: auto;
+        }
+    </style>
+</head>
+   <body class="home blog halimthemes halimmovies" data-masonry="">  
       <header id="header">
          <div class="container">
             <div class="row" id="headwrap">
@@ -100,13 +151,14 @@
                   <span class="icon-bar"></span>
                   <span class="icon-bar"></span>
                   </button>
-                  <button type="button" class="navbar-toggle collapsed pull-right expand-search-form" data-toggle="collapse" data-target="#search-form" aria-expanded="false">
-                  <span class="hl-search" aria-hidden="true"></span>
-                  </button>
-                  <button type="button" class="navbar-toggle collapsed pull-right get-bookmark-on-mobile">
-                  Bookmarks<i class="hl-bookmark" aria-hidden="true"></i>
-                  <span class="count">0</span>
-                  </button>
+                 <button type="button" class="navbar-toggle collapsed pull-right expand-search-form" data-toggle="collapse" data-target="#search-form" aria-expanded="false">
+                  Tìm kiếm <i class="fa fa-search"></i> 
+                </button>
+                  <!--Nút đánh dấu phim-->
+                  <!--<button type="button" class="navbar-toggle collapsed pull-right get-bookmark-on-mobile">-->
+                  <!--Bookmarks<i class="hl-bookmark" aria-hidden="true"></i>-->
+                  <!--<span class="count">0</span>-->
+                  <!--</button>-->
                   <button type="button" class="navbar-toggle collapsed pull-right get-locphim-on-mobile">
                   <a href="javascript:;" id="expand-ajax-filter" style="color: #ffed4d;">Lọc <i class="fas fa-filter"></i></a>
                   </button>
@@ -160,9 +212,23 @@
                      <li><a href="{{ route('loc-phim') }}" onclick="locphim()" style="color: #ffed4d;">Lọc Phim</a></li>
                   </ul>
                </div>
+               
             </nav>
             <div class="collapse navbar-collapse" id="search-form">
-               <div id="mobile-search-form" class="halim-search-form"></div>
+               <div id="mobile-search-form" class="halim-search-form">
+                  <!-- THÊM FORM VÀO ĐÂY -->
+                  <div class="form-group form-timkiem">
+                     <form action="{{ route('tim-kiem') }}" method="GET">
+                        <div class="input-group">
+                           <input id="timkiem-mobile" type="text" name="search" class="form-control" placeholder="Tìm kiếm phim..." autocomplete="off" required>
+                           <span class="input-group-btn">
+                              <button class="btn btn-primary" type="submit"><i class="fa fa-search"></i></button>
+                           </span>
+                        </div>
+                     </form>
+                  </div>
+                  <ul class="list-group" id="result-mobile" style="display: none; overflow:scroll; max-height:60vh;"></ul>
+               </div>
             </div>
             <div class="collapse navbar-collapse" id="user-info">
                <div id="mobile-user-login"></div>
@@ -198,9 +264,61 @@
      
       <script type='text/javascript' src='{{ asset('client/js/bootstrap.min.js?ver=5.7.2') }}' id='bootstrap-js'></script>
       <script type='text/javascript' src='{{ asset('client/js/owl.carousel.min.js?ver=5.7.2') }}' id='carousel-js'></script>
-      <script type='text/javascript' src='{{ asset('client/js/halimtheme-core.min.js?ver=1626273138') }}' id='halim-init-js'></script>
       <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
-      <script type="text/javascript">
+      <script>
+(function() {
+    // 1. Hàm nén ảnh và chặn tải ngay lập tức
+    const optimizeAndBlock = () => {
+        // Tìm tất cả ảnh từ ophim.live
+        const selector = 'img[src*="ophim.live"], img[src*="phimimg.com"]';
+        const images = document.querySelectorAll(selector);
+        
+        images.forEach(img => {
+            if (!img.dataset.src) {
+                let originalSrc = img.src;
+                
+                // Sử dụng Proxy của Weserv để nén ảnh (Giảm từ 2.8MB xuống ~50KB)
+                // Tham số: w=300 (rộng 300px), output=webp (định dạng nhẹ nhất), q=80 (chất lượng 80%)
+                let compressedSrc = `https://images.weserv.nl/?url=${encodeURIComponent(originalSrc)}&w=300&output=webp&q=80`;
+                
+                img.dataset.src = compressedSrc;
+                // Chặn request gốc bằng ảnh rỗng
+                img.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+                img.classList.add('lazy-optimized');
+            }
+        });
+    };
+
+    // Chạy ngay khi trình duyệt đọc code
+    optimizeAndBlock();
+
+    // 2. Kích hoạt IntersectionObserver để Lazy Load
+    document.addEventListener("DOMContentLoaded", function() {
+        // Chạy lại lần nữa cho các ảnh load động (nếu có)
+        optimizeAndBlock();
+
+        if ("IntersectionObserver" in window) {
+            const imageObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        img.src = img.dataset.src;
+                        img.style.opacity = "1";
+                        observer.unobserve(img);
+                    }
+                });
+            }, { rootMargin: "0px 0px 400px 0px" });
+
+            document.querySelectorAll('.lazy-optimized').forEach(img => {
+                img.style.transition = "opacity 0.5s";
+                img.style.opacity = "0.3";
+                imageObserver.observe(img);
+            });
+        }
+    });
+})();
+</script>
+<script type="text/javascript">
       $(document).ready(function(){
          showngay();
       })
@@ -248,22 +366,38 @@
          })
       </script>
      <script>
-          $(document).ready(function(){
-    var delayTimer; // Biến để lưu trữ setTimeout
-    $('#timkiem').keyup(function(){
-        clearTimeout(delayTimer); // Xóa setTimeout hiện tại trước khi thiết lập một mới
-        delayTimer = setTimeout(function() {
-            $('#result').html('');
-            var search = $('#timkiem').val();
-            if(search != '') {
-                $('#result').css('display','inherit');
-                var expression = new RegExp(search, "i");
-                var count = 0; // Số lượng phim mẫu đã thêm vào
-                $.getJSON('/json_file/movies.json', function(data) {
-                    $.each(data, function(key, value){
-                        if ((value.title.search(expression) !== -1 || value.description.search(expression) !== -1) && count < 15) {
-                            $('#result').css('display', 'inherit');
-                            $('#result').append(
+     $(document).ready(function(){
+        var delayTimer;
+        var cachedMovies = null; // Cache dữ liệu JSON
+        
+        // Load JSON một lần duy nhất khi trang được tải
+        $.getJSON('/json_file/movies.json', function(data) {
+            cachedMovies = data;
+        });
+        
+        $('#timkiem').keyup(function(){
+            clearTimeout(delayTimer);
+            delayTimer = setTimeout(function() {
+                $('#result').html('');
+                var search = $('#timkiem').val();
+                if(search != '') {
+                    $('#result').css('display','inherit');
+                    
+                    // Kiểm tra xem dữ liệu đã được load chưa
+                    if (!cachedMovies) {
+                        $('#result').append('<li class="list-group-item">Đang tải dữ liệu...</li>');
+                        return;
+                    }
+                    
+                    var expression = new RegExp(search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), "i");
+                    var count = 0;
+                    var results = []; // Tạo array để chứa kết quả
+                    
+                    // Dùng for loop thay vì $.each để có thể break sớm
+                    for (var i = 0; i < cachedMovies.length && count < 15; i++) {
+                        var value = cachedMovies[i];
+                        if (value.title.search(expression) !== -1 || value.description.search(expression) !== -1) {
+                            results.push(
                                 '<a href="/phim/' + value.slug + '" style="text-decoration: none; color: inherit;">' +
                                 '<li style="cursor:pointer" class="list-group-item link-class">' +
                                 '<img src="' + (value.image.startsWith('https') ? value.image : '/uploads/movies/' + value.image) + 
@@ -271,20 +405,26 @@
                                 value.title + 
                                 '</li></a>'
                             );
-                            count++; // Tăng số lượng phim mẫu đã thêm vào
+                            count++;
                         }
-                    });
+                    }
+                    
+                    // Append tất cả kết quả một lần duy nhất
                     if (count == 0) {
                         $('#result').append('<li class="list-group-item">Không tìm thấy kết quả cho "' + search + '"</li>');
-                    } else if (count == 15) {
-                        $('#result').append('<li class="list-group-item">' + search + '</li>');
+                    } else {
+                        $('#result').append(results.join(''));
+                        if (count == 15) {
+                            $('#result').append('<li class="list-group-item">' + search + '</li>');
+                        }
                     }
-                });
-            } else {
-                $('#result').css('display', 'none');
-            }
-        }, 200); // Thời gian debounce (ms)
-    });
+                    
+                } else {
+                    $('#result').css('display', 'none');
+                }
+            }, 300); // Tăng debounce lên 300ms
+        });
+
 
     $('#result').on('click', 'li', function() { 
         var click_text = $(this).text().split('->');
@@ -295,82 +435,49 @@
 });
 
       </script>
-   
-      <style>#overlay_mb{position:fixed;display:none;width:100%;height:100%;top:0;left:0;right:0;bottom:0;background-color:rgba(0, 0, 0, 0.7);z-index:99999;cursor:pointer}#overlay_mb .overlay_mb_content{position:relative;height:100%}.overlay_mb_block{display:inline-block;position:relative}#overlay_mb .overlay_mb_content .overlay_mb_wrapper{width:600px;height:auto;position:relative;left:50%;top:50%;transform:translate(-50%, -50%);text-align:center}#overlay_mb .overlay_mb_content .cls_ov{color:#fff;text-align:center;cursor:pointer;position:absolute;top:5px;right:5px;z-index:999999;font-size:14px;padding:4px 10px;border:1px solid #aeaeae;background-color:rgba(0, 0, 0, 0.7)}#overlay_mb img{position:relative;z-index:999}@media only screen and (max-width: 768px){#overlay_mb .overlay_mb_content .overlay_mb_wrapper{width:400px;top:3%;transform:translate(-50%, 3%)}}@media only screen and (max-width: 400px){#overlay_mb .overlay_mb_content .overlay_mb_wrapper{width:310px;top:3%;transform:translate(-50%, 3%)}}</style>
-    
-      <style>
-         #overlay_pc {
-         position: fixed;
-         display: none;
-         width: 100%;
-         height: 100%;
-         top: 0;
-         left: 0;
-         right: 0;
-         bottom: 0;
-         background-color: rgba(0, 0, 0, 0.7);
-         z-index: 99999;
-         cursor: pointer;
-         }
-         #overlay_pc .overlay_pc_content {
-         position: relative;
-         height: 100%;
-         }
-         .overlay_pc_block {
-         display: inline-block;
-         position: relative;
-         }
-         #overlay_pc .overlay_pc_content .overlay_pc_wrapper {
-         width: 600px;
-         height: auto;
-         position: relative;
-         left: 50%;
-         top: 50%;
-         transform: translate(-50%, -50%);
-         text-align: center;
-         }
-         #overlay_pc .overlay_pc_content .cls_ov {
-         color: #fff;
-         text-align: center;
-         cursor: pointer;
-         position: absolute;
-         top: 5px;
-         right: 5px;
-         z-index: 999999;
-         font-size: 14px;
-         padding: 4px 10px;
-         border: 1px solid #aeaeae;
-         background-color: rgba(0, 0, 0, 0.7);
-         }
-         #overlay_pc img {
-         position: relative;
-         z-index: 999;
-         }
-         @media only screen and (max-width: 768px) {
-         #overlay_pc .overlay_pc_content .overlay_pc_wrapper {
-         width: 400px;
-         top: 3%;
-         transform: translate(-50%, 3%);
-         }
-         }
-         @media only screen and (max-width: 400px) {
-         #overlay_pc .overlay_pc_content .overlay_pc_wrapper {
-         width: 310px;
-         top: 3%;
-         transform: translate(-50%, 3%);
-         }
-         }
-      </style>
-     
-      <style>
-         .float-ck { position: fixed; bottom: 0px; z-index: 9}
-         * html .float-ck /* IE6 position fixed Bottom */{position:absolute;bottom:auto;top:expression(eval (document.documentElement.scrollTop+document.docum entElement.clientHeight-this.offsetHeight-(parseInt(this.currentStyle.marginTop,10)||0)-(parseInt(this.currentStyle.marginBottom,10)||0))) ;}
-         #hide_float_left a {background: #0098D2;padding: 5px 15px 5px 15px;color: #FFF;font-weight: 700;float: left;}
-         #hide_float_left_m a {background: #0098D2;padding: 5px 15px 5px 15px;color: #FFF;font-weight: 700;}
-         span.bannermobi2 img {height: 70px;width: 300px;}
-         #hide_float_right a { background: #01AEF0; padding: 5px 5px 1px 5px; color: #FFF;float: left;}
-      </style>
-
+    <script>
+        // Mobile search autocomplete
+        var delayTimerMobile;
+        $('#timkiem-mobile').keyup(function(){
+            clearTimeout(delayTimerMobile);
+            delayTimerMobile = setTimeout(function() {
+                $('#result-mobile').html('');
+                var search = $('#timkiem-mobile').val();
+                if(search != '') {
+                    $('#result-mobile').css('display','block');
+                    var expression = new RegExp(search, "i");
+                    var count = 0;
+                    $.getJSON('/json_file/movies.json', function(data) {
+                        $.each(data, function(key, value){
+                            if ((value.title.search(expression) !== -1 || value.description.search(expression) !== -1) && count < 15) {
+                                $('#result-mobile').append(
+                                    '<a href="/phim/' + value.slug + '" style="text-decoration: none; color: inherit;">' +
+                                    '<li style="cursor:pointer" class="list-group-item link-class">' +
+                                    '<img src="' + (value.image.startsWith('https') ? value.image : '/uploads/movies/' + value.image) + 
+                                    '" height="40" width="40" loading="lazy" />' + 
+                                    value.title + 
+                                    '</li></a>'
+                                );
+                                count++;
+                            }
+                        });
+                        if (count == 0) {
+                            $('#result-mobile').append('<li class="list-group-item">Không tìm thấy kết quả</li>');
+                        }
+                    });
+                } else {
+                    $('#result-mobile').css('display', 'none');
+                }
+            }, 200);
+        });
+        
+        $('#result-mobile').on('click', 'li', function() { 
+            var click_text = $(this).text().split('->');
+            $('#timkiem-mobile').val(click_text[0].trim());
+            $("#result-mobile").html('');
+            $("#result-mobile").css('display','none');
+        });
+    </script>
 
       
    </body>

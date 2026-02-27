@@ -28,7 +28,7 @@
     <div class="row justify-content-center">
         <div class="col-md-12">
             <div class="card">
-                <a href="{{ route('movie.create') }}" class="btn btn-primary">Thêm phim</a>
+                <a href="{{ route('movie.create') }}" class="btn btn-primary">Cập nhật tập phim cho tất cả</a>
 
                 <div class="card-header">Quản lý phim</div>
                 

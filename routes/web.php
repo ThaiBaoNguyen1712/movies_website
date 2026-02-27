@@ -44,7 +44,7 @@ Route::get('/quoc-gia/{slug}',[IndexController::class,'country'])->name('country
 
 Route::get('/phim/{slug}',[IndexController::class,'movie'])->name('movie');
 
-Route::get('/xem-phim/{slug}/{tap}/{server_active}',[IndexController::class,'watch'])->name('watch');
+Route::get('/xem-phim/{slug}/{tap}/{server_active?}',[IndexController::class,'watch'])->name('watch');
 
 Route::get('/so-tap',[IndexController::class,'episode'])->name('so-tap');
 
@@ -60,6 +60,7 @@ Route::post('resorting-category', [CategoryController::class, 'resorting'])->nam
 Route::post('resorting-genre', [GenreController::class, 'resorting'])->name('resorting.genre');
 Route::post('resorting-country', [CountryController::class, 'resorting'])->name('resorting.country');
 
+Route::get('movie/update-episode', [MovieController::class, 'updateEpisodeList'])->name('movie.update-episode');
 
 Route::resource('info',InformationController::class);
 Route::resource('genre',GenreController::class);
@@ -78,7 +79,8 @@ Route::get('/update-year-phim',[MovieController::class,'update_year']);
 Route::get('/update-topview-phim',[MovieController::class,'update_topview']);
 Route::get('/filter-topview',[MovieController::class,'filter_topview']);
 Route::get('/update_season',[MovieController::class,'update_season']);
-Route::get('/update_movie_api{slug}',[MovieController::class,'update_movie_api'])->name('update_movie_api');
+
+Route::get('/update_movie_api/{slug}',[MovieController::class,'update_movie_api'])->name('update_movie_api');
 
 Route::post('watch-video', [MovieController::class,'watch_video'])->name('watch-video');
 

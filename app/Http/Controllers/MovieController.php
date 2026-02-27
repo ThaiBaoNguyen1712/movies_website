@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\DB;
 
 use App\Models\Movie;
 use App\Models\Category;
@@ -22,24 +23,88 @@ class MovieController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+   public function index(Request $request)
     {
-        $list = Movie::with('category','movie_genre','movie_category','country','genre')->withCount('episode')->orderBy('id','Desc')->get();
-        
-        $path=public_path()."/json_file/";
+        // Lấy từ khóa tìm kiếm từ request
+        $search = $request->input('search');
+
+        $list = Movie::with([
+                'country:id,title', 
+                'genre:id,title', 
+                'movie_genre:id,title', 
+                'movie_category:id,title',
+                'episode' => function($q) {
+                    $q->select('id', 'movie_id', 'episode')->orderBy('id', 'desc')->limit(3);
+                }
+            ])
+            ->select('id', 'title', 'slug', 'image', 'thuocphim', 'country_id', 'phude', 'thoiluong', 'season', 'trailer', 'sotap', 'year', 'status', 'create_at', 'update_at')
+            ->withCount('episode')
+            // Logic tìm kiếm
+            ->when($search, function($query) use ($search) {
+                $query->where(function($q) use ($search) {
+                    $q->where('title', 'LIKE', "%$search%")
+                    ->orWhere('slug', 'LIKE', "%$search%");
+                });
+            })
+            ->orderBy('id', 'Desc') 
+            // Thay ->get() bằng ->paginate(20)
+            ->paginate(20); 
+
+        $movies = Movie::select('id','title','slug','image','year','description')
+            ->where('status', 1)
+            ->orderBy('id','desc')
+            ->get();
+
+
+       $path=public_path()."/json_file/";
         if(!is_dir($path))
         {
             mkdir($path,077,true);
         }
-        File::put($path.'movies.json',json_encode($list));
-        return view('admincp.movie.index',compact('list'));
-    }
+        File::put($path.'movies.json',json_encode($movies));
 
+
+        return view('admincp.movie.index', compact('list', 'search'));
+    }
     /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
      */
+    // Hiển thị danh sách phim cần cập nhật tập
+   // MovieController.php
+
+        public function getIncompleteMoviesQuery($search = null)
+        {
+            return Movie::withCount(['episode as episode_count' => function($query) {
+                    $query->select(DB::raw('count(distinct(episode))'));
+                }])
+                ->whereIn('thuocphim', ['phimbo', 'hoathinh'])
+                ->where(function($query) use ($search) {
+                    $query->where(function($q) {
+                        $q->where('sotap', 'LIKE', '%?%')
+                        ->orWhereRaw('(SELECT COUNT(DISTINCT episode) FROM episodes WHERE episodes.movie_id = movies.id) < CAST(REGEXP_REPLACE(sotap, "[^0-9]", "") AS UNSIGNED)');
+                    });
+
+                    if ($search) {
+                        $query->where(function($q) use ($search) {
+                            $q->where('title', 'LIKE', "%$search%")
+                            ->orWhere('slug', 'LIKE', "%$search%");
+                        });
+                    }
+                });
+        }
+
+        // Hàm hiển thị view Admin vẫn giữ nguyên nhưng gọi hàm trên
+        public function updateEpisodeList(Request $request) 
+        {
+            $search = $request->input('search');
+            $list = $this->getIncompleteMoviesQuery($search)
+                        ->orderBy('update_at', 'Desc')
+                        ->paginate(20);
+
+            return view('admincp.movie.updateEpisode', compact('list', 'search'));
+        }
     public function create()
     {
         $category=Category::pluck('title','id');

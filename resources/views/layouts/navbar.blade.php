@@ -98,6 +98,11 @@
                     ><i class="fa fa-angle-right"></i>Liệt kê phim</a
                   >
                 </li>
+                <li>
+                 <a href="{{ route('movie.update-episode') }}">
+                 <i class="fa fa-angle-right"></i>Cập nhật tập phim</a>
+
+                </li>
               </ul>
             </li>
             <li class="treeview {{ ($segment == 'episode') ? 'active' : '' }} ">

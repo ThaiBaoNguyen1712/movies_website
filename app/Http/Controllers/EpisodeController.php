@@ -16,14 +16,26 @@ class EpisodeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $linkmovie = LinkMovie::orderBy('id','DESC')->pluck('title','id');
-        $list_server =LinkMovie::orderBy('id','DESC')->get();
-        $list_episode= Episode::with('movie')->orderBy('movie_id','DESC')->get();
-        // return response()->json($list_episode);
+        $search = $request->input('search');
 
-        return view('admincp.episode.index',compact('list_episode','linkmovie','list_server'));
+        $linkmovie = LinkMovie::orderBy('id','DESC')->pluck('title','id');
+        $list_server = LinkMovie::orderBy('id','DESC')->get();
+
+        // Sử dụng paginate thay vì get()
+        $list_episode = Episode::with('movie')
+            ->when($search, function($query) use ($search) {
+                $query->where('episode', 'LIKE', "%$search%")
+                    // Tìm kiếm xuyên sang bảng Movie (tên phim)
+                    ->orWhereHas('movie', function($q) use ($search) {
+                        $q->where('title', 'LIKE', "%$search%");
+                    });
+            })
+            ->orderBy('movie_id','DESC')
+            ->paginate(30); // Hiển thị 30 tập mỗi trang
+
+        return view('admincp.episode.index', compact('list_episode', 'linkmovie', 'list_server', 'search'));
     }
 
     /**

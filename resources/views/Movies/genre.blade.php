@@ -6,7 +6,7 @@
                <div class="panel-heading">
                   <div class="row">
                      <div class="col-xs-6">
-                        <div class="yoast_breadcrumb hidden-xs"><span><span><a href="">Thể loại</a> » <span class="breadcrumb_last" aria-current="page">2020</span></span></span></div>
+                        <div class="yoast_breadcrumb hidden-xs"><span><span><a href="">Thể loại</a> » <span class="breadcrumb_last" aria-current="page">{{ $gen_slug->title }}</span></span></span></div>
                      </div>
                   </div>
                </div>
@@ -17,7 +17,7 @@
             <main id="main-contents" class="col-xs-12 col-sm-12 col-md-8">
                <section>
                   <div class="section-bar clearfix">
-                     <h1 class="section-title"><span>Phim 2020</span></h1>
+                     <h1 class="section-title"><span>Phim Theo Thể Loại</span></h1>
                   </div>
                   <div class="halim_box">
                      @foreach($movie as $key => $mov)

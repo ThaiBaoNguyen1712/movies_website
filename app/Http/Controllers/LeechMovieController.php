@@ -26,13 +26,30 @@ class LeechMovieController extends Controller
         return view('admincp.leech.index',compact('resp'));
     }
     public function leech_movie_select(Request $request) {
-        $page = $request->input('page');
-        $resp = Http::get("https://ophim1.com/danh-sach/phim-moi-cap-nhat?page=".$page)->json();
-        return view('admincp.leech.movie-list', compact('resp','page'));
+        $page = $request->input('page', 1); // Mặc định là trang 1 nếu trống
+        $site = $request->input('site');
+
+        // Chọn URL dựa trên site
+        if($site == 'kkphim'){
+            $url = "https://phimapi.com/danh-sach/phim-moi-cap-nhat?page=";
+        } else {
+            // Mặc định là ophim nếu không chọn hoặc chọn ophim
+            $url = "https://ophim1.com/danh-sach/phim-moi-cap-nhat?page=";
+        }
+
+        try {
+            $resp = Http::timeout(10)->get($url . $page)->json();
+        } catch (\Exception $e) {
+            return response()->html("<tr><td colspan='100%'>Lỗi kết nối đến API nguồn</td></tr>");
+        }
+
+        // Trả về partial view (chỉ chứa danh sách các dòng tr)
+        return view('admincp.leech.movie-list', compact('resp', 'page', 'site'));
     }
     
-    public function leech_detail($slug){
-        $resp =Http::get("https://ophim1.com/phim/".$slug)->json();
+    public function leech_detail($slug, $site = 'ophim'){
+        $url = ($site == 'kkphim') ? "https://phimapi.com/phim/".$slug : "https://ophim1.com/phim/".$slug;
+        $resp =Http::get($url)->json();
         $resp_movie =$resp['movie'];
         return view('admincp.leech.detail',compact('resp_movie'));
     }
@@ -124,142 +141,239 @@ class LeechMovieController extends Controller
         }
         
 
+    public function _leech_store_movie($slug)
+    {
+        // 1. Thử lấy từ OPhim trước, nếu không có hoặc lỗi thì thử KKPhim (phimapi.com)
+        $resp = Http::get("https://ophim1.com/phim/" . $slug)->json();
         
-        public function _leech_store_movie($slug)
-        {
-            $resp = Http::get("https://ophim1.com/phim/" . $slug)->json();
-            $resp_movie = $resp['movie'];
-            $check_movie = Movie::where('slug', $resp_movie['slug'])->count();
-            
-            if ($check_movie == 0) {
-                $movie = new Movie();
-
-                // Các thuộc tính cơ bản của bộ phim
-                $movie->title = $resp_movie['name'];
-                $movie->name_eng = $resp_movie['origin_name'];
-                $movie->slug = $resp_movie['slug'];
-                $movie->tags = $resp_movie['name'] . ',' . $resp_movie['slug'];
-                $movie->description = strip_tags($resp_movie['content']);
-                $movie->status = 1;
-                $movie->season = $resp_movie['tmdb']['season'] ?? null;
-                $movie->resolution = $this->getResolution($resp_movie['quality']);
-                
-                // Xử lý danh sách các category
-                $categories = [];
-                $current_year = date('Y');
-                $created_year = date('Y', strtotime($resp_movie['created']['time']));
-                if ($resp_movie['chieurap'] === true) {
-                    $categories[] = 'phim-chieu-rap';
-                } 
-                if ($resp_movie['type'] == "hoathinh") {
-                    $categories[] = 'phim-hoat-hinh';
-                } 
-                if ($resp_movie['type'] == "series") {
-                    $categories[] = 'phim-bo';
-                } 
-                if ($current_year - $created_year <= 1) {
-                    $categories[] = 'phim-moi';
-                } 
-                if ($resp_movie['lang'] == "Lồng tiếng") {
-                    $categories[] = 'phim-thuyet-minh';
-                } 
-                if ($resp_movie['type'] == 'single') {
-                    $categories[] = 'phim-le';
-                } 
-
-                // Các thuộc tính còn lại của bộ phim
-                $movie->thuocphim = $resp_movie['type'] == 'single' ? 'phimle' : 'phimbo';
-                $country_find = Country::where('slug', $resp_movie['country'][0]['slug'])->first();
-                $movie->country_id = $country_find ? $country_find->id : Country::where('slug','quoc-gia-khac')->first()->id;
-                $movie->phim_hot = ($current_year - $created_year <= 1) ? 1 : 0;
-                $movie->views = rand(1000, 99999);
-                $movie->trailer = $resp_movie['trailer_url'];
-                $movie->sotap = $resp_movie['episode_total'];
-                $movie->phude = ($resp_movie['lang'] == "Lồng tiếng") ? 1 : 0;
-                $movie->create_at = Carbon::now('Asia/Ho_Chi_Minh');
-                $movie->update_at = Carbon::now('Asia/Ho_Chi_Minh');
-                $movie->thoiluong = $resp_movie['time'];
-                $movie->year = $resp_movie['year'];
-                $movie->actor = implode(', ', $resp_movie['actor']);
-                $movie->director = implode(', ', $resp_movie['director']);
-
-                $category_sample = Category::where('slug', $categories[0])->first();
-                $movie->category_id =$category_sample->id;
-
-                $genre = Genre::where('slug', $resp_movie['category'][0]['slug'])->first();
-                $movie->genre_id = $genre ? $genre->id : null;
-                $movie->image = $resp_movie['thumb_url'];
-                $movie->save();
-
-                // Attach genres
-                foreach ($resp_movie['category'] as $res_cate) {
-                    $genre = Genre::where('slug', $res_cate['slug'])->first();
-                    if ($genre) {
-                        $movie->movie_genre()->attach($genre->id);
-                    }
-                }
-
-                 // Lưu các category vào cơ sở dữ liệu
-                foreach ($categories as $category_slug) {
-                    $category = Category::where('slug', $category_slug)->first();
-                    if ($category) {
-                        $movie->movie_category()->attach($category->id);
-                    }
-                }
-            }
+        // Nếu OPhim không có phim này (status false), thử sang KKPhim
+        if(!isset($resp['status']) || $resp['status'] == false) {
+            $resp = Http::get("https://phimapi.com/phim/" . $slug)->json();
         }
 
+        // Nếu vẫn không có dữ liệu thì thoát
+        if(!isset($resp['movie'])) return;
 
-        public function _leech_episodes($slug, $from)
+        $resp_movie = $resp['movie'];
+        $check_movie = Movie::where('slug', $resp_movie['slug'])->count();
+        
+        if ($check_movie == 0) {
+            $movie = new Movie();
+
+            // Thuộc tính cơ bản
+            $movie->title = $resp_movie['name'];
+            $movie->name_eng = $resp_movie['origin_name'];
+            $movie->slug = $resp_movie['slug'];
+            $movie->tags = $resp_movie['name'] . ',' . $resp_movie['slug'];
+            $movie->description = strip_tags($resp_movie['content']);
+            $movie->status = 1;
+            $movie->season = $resp_movie['tmdb']['season'] ?? null;
+            
+            // Cần đảm bảo hàm getResolution tồn tại trong Controller
+            $movie->resolution = method_exists($this, 'getResolution') ? $this->getResolution($resp_movie['quality']) : 0;
+            
+            // Xử lý danh sách các category (Logic của bạn)
+            $categories = [];
+            $current_year = date('Y');
+            // Fix lỗi nếu trường created không tồn tại
+            $created_time = $resp_movie['created']['time'] ?? now();
+            $created_year = date('Y', strtotime($created_time));
+
+            if (($resp_movie['chieurap'] ?? false) === true) $categories[] = 'phim-chieu-rap';
+            if ($resp_movie['type'] == "hoathinh") $categories[] = 'phim-hoat-hinh';
+            if ($resp_movie['type'] == "series") $categories[] = 'phim-bo';
+            if ($current_year - $created_year <= 1) $categories[] = 'phim-moi';
+            if (($resp_movie['lang'] ?? '') == "Lồng tiếng") $categories[] = 'phim-thuyet-minh';
+            if ($resp_movie['type'] == 'single') $categories[] = 'phim-le';
+
+            $movie->thuocphim = $resp_movie['type'] == 'single' ? 'phimle' : 'phimbo';
+            
+            // Quốc gia
+            $country_slug = $resp_movie['country'][0]['slug'] ?? 'quoc-gia-khac';
+            $country_find = Country::where('slug', $country_slug)->first();
+            $movie->country_id = $country_find ? $country_find->id : (Country::where('slug','quoc-gia-khac')->first()->id ?? 1);
+            
+            $movie->phim_hot = ($current_year - $created_year <= 1) ? 1 : 0;
+            $movie->views = rand(1000, 99999);
+            $movie->trailer = $resp_movie['trailer_url'] ?? '';
+            $movie->sotap = $resp_movie['episode_total'] ?? 1;
+            $movie->phude = (($resp_movie['lang'] ?? '') == "Lồng tiếng") ? 1 : 0;
+            $movie->thoiluong = $resp_movie['time'] ?? '';
+            $movie->year = $resp_movie['year'] ?? $current_year;
+            
+            // Xử lý Actor & Director (Phòng trường hợp API trả về mảng trống)
+            $movie->actor = is_array($resp_movie['actor']) ? implode(', ', $resp_movie['actor']) : '';
+            $movie->director = is_array($resp_movie['director']) ? implode(', ', $resp_movie['director']) : '';
+            
+            // Category & Genre mặc định
+            if(!empty($categories)) {
+                $cat = Category::where('slug', $categories[0])->first();
+                $movie->category_id = $cat ? $cat->id : 1;
+            } else {
+                $movie->category_id = 1; 
+            }
+
+            $genre_slug = $resp_movie['category'][0]['slug'] ?? 'phim-moi';
+            $genre = Genre::where('slug', $genre_slug)->first();
+            $movie->genre_id = $genre ? $genre->id : null;
+
+            // XỬ LÝ ẢNH (Quan trọng nhất)
+            // Nếu đã có http (KKPhim) thì giữ nguyên, nếu không thì tự thêm domain OPhim
+            $thumb = $resp_movie['thumb_url'];
+            $movie->image = (strpos($thumb, 'http') !== false) ? $thumb : "https://img.ophim.tv/uploads/movies/" . $thumb;
+
+            $movie->save();
+
+            // Attach genres
+            if(isset($resp_movie['category'])) {
+                foreach ($resp_movie['category'] as $res_cate) {
+                    $genre = Genre::where('slug', $res_cate['slug'])->first();
+                    if ($genre) $movie->movie_genre()->attach($genre->id);
+                }
+            }
+
+            // Attach categories
+            foreach ($categories as $category_slug) {
+                $category = Category::where('slug', $category_slug)->first();
+                if ($category) $movie->movie_category()->attach($category->id);
+            }
+            
+            // Sau khi lưu xong, cập nhật file JSON để search client không bị thiếu phim mới
+            if(method_exists($this, 'updateMovieJson')) {
+                $this->updateMovieJson();
+            }
+        }
+    }
+
+
+            public function _leech_episodes($slug, $from)
         {
             $movie = Movie::where('slug', $slug)->first();
-            $linkmovie_id = ($from == "KKPhim") ? 5 : 3; // Thiết lập id của linkmovie dựa trên giá trị của $from
-            $linkmovie = LinkMovie::where('id', $linkmovie_id)->first();
-            $resp_all = [];
-        
-            if ($from == "OPhim") {
-                $resp_ophim = Http::get("https://ophim1.com/phim/" . $slug)->json();
-                $resp_all[] = $resp_ophim;
-            }
-            if ($from == "KKPhim") {
-                $resp_kkphim = Http::get("https://phimapi.com/phim/" . $slug)->json();
-                $resp_all[] = $resp_kkphim;
-            }
+            if (!$movie) return;
+
+            $linkmovie_id = ($from == "KKPhim") ? 5 : 3;
+            $linkmovie = LinkMovie::find($linkmovie_id);
+
+            $url = ($from == "KKPhim") ? "https://phimapi.com/phim/" : "https://ophim1.com/phim/";
+            $response = Http::get($url . $slug)->json();
+
             $count = 0;
             $list_episode_add = '';
-        
-            foreach ($resp_all as $resp) {
-                foreach ($resp['episodes'] as $key => $res) {
-                    foreach ($res['server_data'] as $key_data => $res_data) {
-                        $episode_check = Episode::where('episode', $res_data['name'])
-                            ->where('movie_id', $movie->id)
+
+            if (isset($response['episodes'])) {
+                foreach ($response['episodes'] as $server) {
+                    foreach ($server['server_data'] as $res_data) {
+                        
+                        // --- BƯỚC CHUẨN HÓA TRIỆT ĐỂ ---
+                        $tap_raw = $res_data['name']; // Ví dụ: "Tập 01", "01", "1"
+                        
+                        // 1. Xóa chữ "Tập", "tập", dấu cách, dấu gạch ngang... chỉ giữ lại số
+                        $tap_clean = preg_replace('/[^0-9]/', '', $tap_raw); 
+
+                        // 2. Ép kiểu về số nguyên để mất số 0 ở đầu (01 -> 1)
+                        $tap_phim = (int)$tap_clean; 
+
+                        // Trường hợp đặc biệt: Nếu API trả về chữ "Full" (không có số), preg_replace sẽ ra rỗng
+                        // Nếu rỗng thì ta giữ nguyên tên gốc của API (ví dụ "Full")
+                        if($tap_clean === '') {
+                            $tap_phim = $res_data['name'];
+                        }
+
+                        // Kiểm tra trùng lặp
+                        $episode_check = Episode::where('movie_id', $movie->id)
+                            ->where('episode', $tap_phim)
                             ->where('server', $linkmovie->id)
-                            ->count();
-        
-                        if ($episode_check == 0) {
+                            ->exists();
+
+                        if (!$episode_check) {
                             $ep = new Episode();
                             $ep->movie_id = $movie->id;
                             $ep->link = '<p><iframe allowfullscreen frameborder=0 height="360" scrolling="0" src="' . $res_data['link_embed'] . '" width="100%"></iframe></p>';
-                            $ep->episode = $res_data['name'];
-        
-                            // embed
-                            $ep->server = $linkmovie->id;
+                            $ep->episode = $tap_phim; // Lưu số sạch 1, 2, 3...
+                            $ep->server = $linkmovie_id;
                             $ep->created_at = Carbon::now('Asia/Ho_Chi_Minh');
                             $ep->updated_at = Carbon::now('Asia/Ho_Chi_Minh');
                             $ep->save();
-                            $count += 1;
-                            $list_episode_add .= $res_data['name'] . ', ';
+
+                            $movie->update(['update_at' => Carbon::now('Asia/Ho_Chi_Minh')]);
+                            $count++;
+                            $list_episode_add .= $tap_phim . ', ';
                         }
                     }
                 }
             }
 
             if ($count > 0) {
-                toastr()->success($count . ' tập phim của phim đã được lưu! Bao gồm: ' . $list_episode_add);
+                toastr()->success($count . ' tập mới đã thêm: ' . rtrim($list_episode_add, ', '));
             } else {
-                toastr()->error('Trùng lặp tất cả, kiểm tra lại dữ liệu!');
+                toastr()->info('Không có tập mới.');
             }
         }
+
+      public function autoSyncMovieEpisodes($slug)
+        {
+            $movie = Movie::where('slug', $slug)->first();
+            if (!$movie) return;
+
+            $sources = [
+                'KKPhim' => ['url' => "https://phimapi.com/phim/", 'id' => 5],
+                'OPhim'  => ['url' => "https://ophim1.com/phim/", 'id' => 3]
+            ];
+
+            $total_added = 0;
+
+            foreach ($sources as $sourceName => $config) {
+                if (!$this->check_API($sourceName, $slug)) {
+                    continue; 
+                }
+
+                try {
+                    $response = Http::get($config['url'] . $slug)->json();
+                    
+                    if (isset($response['episodes'])) {
+                        foreach ($response['episodes'] as $server) {
+                            foreach ($server['server_data'] as $res_data) {
+                                
+                                $tap_raw = $res_data['name'];
+                                $tap_clean = preg_replace('/[^0-9]/', '', $tap_raw); 
+                                $tap_phim = ($tap_clean === '') ? $tap_raw : (int)$tap_clean;
+
+                                $exists = Episode::where('movie_id', $movie->id)
+                                    ->where('episode', $tap_phim)
+                                    ->where('server', $config['id'])
+                                    ->exists();
+
+                                if (!$exists) {
+                                    $ep = new Episode();
+                                    $ep->movie_id = $movie->id;
+                                    $ep->link = '<p><iframe allowfullscreen frameborder=0 height="360" scrolling="0" src="' . $res_data['link_embed'] . '" width="100%"></iframe></p>';
+                                    $ep->episode = $tap_phim;
+                                    $ep->server = $config['id'];
+                                    $ep->created_at = Carbon::now('Asia/Ho_Chi_Minh');
+                                    $ep->updated_at = Carbon::now('Asia/Ho_Chi_Minh');
+                                    $ep->save();
+
+                                    $total_added++;
+                                }
+                            }
+                        }
+                    }
+                } catch (\Exception $e) {
+                    \Log::error("AutoSync Error [$sourceName] for $slug: " . $e->getMessage());
+                }
+            }
+
+            // --- SỬA CHỖ NÀY ---
+            // Luôn luôn cập nhật update_at để đẩy phim xuống cuối hàng đợi xoay tua
+            $movie->update(['update_at' => Carbon::now('Asia/Ho_Chi_Minh')]);
+
+            if ($total_added > 0) {
+                \Log::info("AutoSync: Đã thêm $total_added tập mới cho phim: $slug");
+            } else {
+                // Tùy chọn: Log để biết Cron vẫn đang kiểm tra phim này nhưng chưa có tập
+                // \Log::info("AutoSync: Kiểm tra $slug - Không có tập mới.");
+            }
+}
         private function getResolution($quality)
         {
             $quality = strtolower($quality);
@@ -280,98 +394,133 @@ class LeechMovieController extends Controller
                     return null;
             }
         }
+  
         public function leech_store(Request $request, $slug)
         {
             $this->_leech_store_movie($slug);
             toastr()->success('Dữ liệu đã được lưu!');
             return redirect()->back();
         }
-        // thêm phim trên 1 trang.
-        public function leech_store_all(Request $request)
+       public function leech_store_all(Request $request)
         {
-            ini_set('max_execution_time', 300); // Đặt thời gian tối đa thực thi là 300 giây (5 phút)
-            $page = $request->input('page');
-            
+            // 1. Tăng thời gian thực thi (leech cả trang tốn khá nhiều request)
+            ini_set('max_execution_time', 600); // Tăng lên 10 phút cho chắc
+            $page = $request->input('page', 1);
+            $site = $request->input('site', 'ophim'); // Lấy site từ request để biết đang leech trang của ai
+
             try {
-                $response = Http::get("https://ophim1.com/danh-sach/phim-moi-cap-nhat?page=" . $page)->json();
-            
-                if (isset($response['items'])) {
-                    $movies = $response['items'];
+                // 2. Xác định URL danh sách dựa trên site người dùng đang chọn
+                $url = ($site == 'kkphim') 
+                    ? "https://phimapi.com/danh-sach/phim-moi-cap-nhat?page=" 
+                    : "https://ophim1.com/danh-sach/phim-moi-cap-nhat?page=";
+
+                $response = Http::get($url . $page)->json();
+                
+                // Chuẩn hóa items (vì OPhim bọc trong ['data']['items'])
+                $movies = $response['items'] ?? ($response['data']['items'] ?? null);
+
+                if ($movies && is_array($movies)) {
+                    $successCount = 0;
+                    $errorMessages = [];
+
                     foreach ($movies as $movieData) {
-                        $slug = $movieData['slug'];
-                        
-                        // Kiểm tra API và lưu phim nếu tồn tại
-                        if ($this->check_API('KKPhim', $slug)) {
-                            $from = 'KKPhim';
-                        } elseif ($this->check_API('OPhim', $slug)) {
-                            $from = 'OPhim';
-                        }
-                        
-                        if (isset($from)) {
+                        try {
+                            $slug = $movieData['slug'] ?? null;
+                            if (!$slug) continue;
+
+                            // 3. Gọi hàm store đơn lẻ đã sửa ở bước trước (hàm này đã tự check site)
                             $this->_leech_store_movie($slug);
-                            $this->_leech_episodes($slug, $from);
+                            
+                            // Giả sử hàm _leech_episodes của bạn cần nguồn để biết tải từ đâu
+                            // Nếu bạn chưa sửa _leech_episodes, hãy đảm bảo nó cũng check được 2 nguồn
+                            $this->_leech_episodes($slug, $site); 
+                            
+                            $successCount++;
+                        } catch (\Exception $e) {
+                            $errorMessages[] = "Lỗi phim {$slug}: " . $e->getMessage();
+                            continue;
                         }
-                        
                     }
-                    
-                    toastr()->success('Dữ liệu đã được lưu!');
+
+                    // 4. FIX LỖI GHI FILE JSON (Quan trọng)
+                    if ($successCount > 0) {
+                        // Định nghĩa lại $list trước khi ghi file
+                        $list = Movie::with('category', 'country')->withCount('episode')->orderBy('id', 'Desc')->get();
+                        
+                        $path = public_path() . "/json_file/";
+                        if (!is_dir($path)) {
+                            mkdir($path, 0777, true);
+                        }
+                        File::put($path . 'movies.json', json_encode($list));
+
+                        toastr()->success("Đã lưu thành công {$successCount} phim!");
+                    }
+
+                    if (!empty($errorMessages)) {
+                        \Log::error("Lỗi leech_store_all: " . implode('; ', $errorMessages));
+                        toastr()->warning("Có " . count($errorMessages) . " phim gặp lỗi.");
+                    }
+
                     return redirect()->back();
                 } else {
-                    return response()->json(['message' => 'Không tìm thấy phim hoặc định dạng phản hồi không chính xác'], 400);
+                    toastr()->error('Không tìm thấy danh sách phim.');
+                    return redirect()->back();
                 }
             } catch (\Exception $e) {
-                return response()->json(['message' => 'Đã xảy ra lỗi: ' . $e->getMessage()], 500);
+                \Log::error("Lỗi hệ thống leech: " . $e->getMessage());
+                toastr()->error('Lỗi: ' . $e->getMessage());
+                return redirect()->back();
             }
         }
         // Thêm tất cả phim từ trang... đến trang ....
-        public function leech_store_all_page(Request $request)
-        {
-               // Tăng giới hạn thời gian thực thi
-            set_time_limit(600);
-            ini_set('max_execution_time', 600);
+        // public function leech_store_all_page(Request $request)
+        // {
+        //        // Tăng giới hạn thời gian thực thi
+        //     set_time_limit(600);
+        //     ini_set('max_execution_time', 600);
             
-            $pageStart = $request->input('page_start');
-            $pageEnd = $request->input('page_end');
-            $allMovies = [];
+        //     $pageStart = $request->input('page_start');
+        //     $pageEnd = $request->input('page_end');
+        //     $allMovies = [];
         
-            for ($page = $pageStart; $page <= $pageEnd; $page++) {
-                try {
-                    $response = Http::get("https://ophim1.com/danh-sach/phim-moi-cap-nhat?page=" . $page)->json();
+        //     for ($page = $pageStart; $page <= $pageEnd; $page++) {
+        //         try {
+        //             $response = Http::get("https://ophim1.com/danh-sach/phim-moi-cap-nhat?page=" . $page)->json();
             
-                    if (isset($response['items'])) {
-                        $movies = $response['items'];
-                        foreach ($movies as $movieData) {
-                            $slug = $movieData['slug'];
+        //             if (isset($response['items'])) {
+        //                 $movies = $response['items'];
+        //                 foreach ($movies as $movieData) {
+        //                     $slug = $movieData['slug'];
                             
-                            // Kiểm tra API và lưu phim nếu tồn tại
-                            if ($this->check_API('KKPhim', $slug)) {
-                                $from = 'KKPhim';
-                            } elseif ($this->check_API('OPhim', $slug)) {
-                                $from = 'OPhim';
-                            }
+        //                     // Kiểm tra API và lưu phim nếu tồn tại
+        //                     if ($this->check_API('KKPhim', $slug)) {
+        //                         $from = 'KKPhim';
+        //                     } elseif ($this->check_API('OPhim', $slug)) {
+        //                         $from = 'OPhim';
+        //                     }
                             
-                            if (isset($from)) {
-                                $this->_leech_store_movie($slug);
-                                $this->_leech_episodes($slug, $from);
-                            }
+        //                     if (isset($from)) {
+        //                         $this->_leech_store_movie($slug);
+        //                         $this->_leech_episodes($slug, $from);
+        //                     }
                             
-                        }
-                        $allMovies = array_merge($allMovies, $movies);
-                    } else {
-                        return response()->json(['message' => 'No movies found or unexpected response format'], 400);
-                    }
-                } catch (\Exception $e) {
-                    return response()->json(['message' => 'An error occurred: ' . $e->getMessage()], 500);
-                }
-            }
+        //                 }
+        //                 $allMovies = array_merge($allMovies, $movies);
+        //             } else {
+        //                 return response()->json(['message' => 'No movies found or unexpected response format'], 400);
+        //             }
+        //         } catch (\Exception $e) {
+        //             //return response()->json(['message' => 'An error occurred: ' . $e->getMessage()], 500);
+        //         }
+        //     }
         
-            if (count($allMovies) > 0) {
-                toastr()->success('Dữ liệu đã được lưu!');
-                return redirect()->back();
-            } else {
-                return response()->json(['message' => 'No movies found in the specified range'], 400);
-            }
-        }
+        //     if (count($allMovies) > 0) {
+        //         toastr()->success('Dữ liệu đã được lưu!');
+        //         return redirect()->back();
+        //     } else {
+        //         return response()->json(['message' => 'No movies found in the specified range'], 400);
+        //     }
+        // }
        public function check_API($option, $slug)
         {
             $resp = '';

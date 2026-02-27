@@ -26,6 +26,8 @@ SmartPhone Compatible web template, free WebDesigns for Nokia, Samsung, LG, Sony
     
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link href="{{ asset('backend/css/bootstrap.css') }}" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="{{ asset('client/css/mobile-fix.css') }}">
+    <link rel="stylesheet" href="{{ asset('backend/css/loader.css') }}">
     <!-- Custom CSS -->
     <link href="{{ asset('backend/css/style.css') }}" rel="stylesheet" type="text/css" />
     <!-- font-awesome icons CSS -->
@@ -40,9 +42,7 @@ SmartPhone Compatible web template, free WebDesigns for Nokia, Samsung, LG, Sony
     />
     <!-- //side nav css file -->
     <!-- js-->
-    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
 
-    <script src="{{asset('backend/js/jquery-1.11.1.min.js') }}"></script>
     <script src="{{asset('backend/js/jquery-1.11.1.min.js') }}"></script>
     <script src="{{ asset('backend/js/bootstrap.js') }}"></script>
     <!--webfonts-->
@@ -263,8 +263,12 @@ SmartPhone Compatible web template, free WebDesigns for Nokia, Samsung, LG, Sony
           {{-- content partiel view --}}
           <div class="">@yield('content')</div>
 
-
-
+          <!-- loader -->
+          <div id="overlayer">
+              <div class="loader"></div>
+              <h3 class="mt-3">Hệ thống đang Leech dữ liệu...</h3>
+              <p>Vui lòng không đóng trình duyệt, quá trình này có thể mất 1-2 phút.</p>
+          </div>
           <script src="{{ asset('backend/js/amcharts.js') }}"></script>
           <!-- for amcharts js -->
           <script src="{{ asset('backend/js/amcharts.js') }}"></script>
@@ -458,6 +462,17 @@ SmartPhone Compatible web template, free WebDesigns for Nokia, Samsung, LG, Sony
 
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
     <script src="//cdn.datatables.net/2.0.5/js/dataTables.min.js"></script>
+    <script>
+      // Thêm đoạn này vào cuối file Blade hoặc file JS dùng chung của Admin
+document.addEventListener("DOMContentLoaded", function() {
+    var images = document.querySelectorAll("img");
+    images.forEach(function(img) {
+        if (!img.hasAttribute("loading")) {
+            img.setAttribute("loading", "lazy");
+        }
+    });
+});
+    </script>
     <script type="text/javascript">
         $('.select-year').change(function(){
             var year =$(this).find(':selected').val();
@@ -633,11 +648,17 @@ $( function() {
             </script>
 
             <script>
-               let table1 = new DataTable('#myTable');
-let table2 = new DataTable('#myTable2');
-let table3 = new DataTable('#myTable3');
-let table4 = new DataTable('#myTable4');
-
+              const config = {
+                deferRender: true,  // Chỉ tạo các thẻ HTML khi thực sự cần (khi chuyển trang)
+                paging: true,       // Bắt buộc phải để phân trang
+                pageLength: 10,     // Mỗi trang hiện ít thôi (10-20 dòng)
+                orderClasses: false, // Tắt cái này để tăng tốc độ xử lý style
+                destroy: true
+            };
+            let table1 = new DataTable('#myTable', config);
+              let table2 = new DataTable('#myTable2', config);
+              let table3 = new DataTable('#myTable3', config);
+              let table4 = new DataTable('#myTable4', config);
 
             </script>
             <script type="text/javascript">

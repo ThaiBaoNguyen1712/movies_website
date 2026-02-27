@@ -34,23 +34,22 @@ class IndexController extends Controller
         return view('Movies.search', compact('search','movie'));
         
     }
-    public function home()
-    {
-        $truycap = TruyCap::find(1);
+public function home()
+{   
+    $category_home = Category::with('movie_category.movie')
+        ->where('status', 1)
+        ->orderBy('position', 'ASC')
+        ->get()
+        ->map(function ($category) {
+            // Sắp xếp lại danh sách movie bên trong mỗi category bằng PHP Collection
+            $category->setRelation('movie_category', $category->movie_category->sortByDesc(function ($item) {
+                return $item->movie->year . '-' . $item->movie->id;
+            }));
+            return $category;
+        });
 
-        if ($truycap) {
-            $truycap->access += 1;
-        } else {
-            $truycap = new TruyCap();
-            $truycap->access = 1;
-        }
-        
-        $truycap->save();
-        
-        $category_home=Category::with('movie_category.movie')->orderBy('position','ASC')->where('status',1)->get();
-        
-        return view('Movies.home', compact('category_home'));
-    }
+    return view('Movies.home', compact('category_home'));
+}
     public function category($slug)
     {
         $cate_slug = Category::where('slug',$slug)->first();

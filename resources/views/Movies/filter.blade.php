@@ -67,52 +67,52 @@
                 
                 <style>
               
-.form-select {
-    color: #fff !important;
-    background-color: #495057 !important;
-    border: 1px solid #6c757d !important;
-    border-radius: 0.25rem !important;
-    height: calc(1.5em + 0.75rem + 2px) !important; /* Điều chỉnh chiều cao */
-    padding: 0.375rem 0.75rem !important;
-}
+        .form-select {
+            color: #fff !important;
+            background-color: #495057 !important;
+            border: 1px solid #6c757d !important;
+            border-radius: 0.25rem !important;
+            height: calc(1.5em + 0.75rem + 2px) !important; /* Điều chỉnh chiều cao */
+            padding: 0.375rem 0.75rem !important;
+        }
 
-.form-select:focus {
-    color: #fff !important;
-    background-color: #495057 !important;
-    border-color: #80bdff !important;
-    outline: 0 !important;
-    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25) !important;
-}
+        .form-select:focus {
+            color: #fff !important;
+            background-color: #495057 !important;
+            border-color: #80bdff !important;
+            outline: 0 !important;
+            box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25) !important;
+        }
 
-.btn-primary {
-    background-color: #007bff !important;
-    border-color: #007bff !important;
-    padding: 0.375rem 0.75rem !important; /* Điều chỉnh padding để khớp với chiều cao */
-}
+        .btn-primary {
+            background-color: #007bff !important;
+            border-color: #007bff !important;
+            padding: 0.375rem 0.75rem !important; /* Điều chỉnh padding để khớp với chiều cao */
+        }
 
-.btn-primary:hover {
-    background-color: #0056b3 !important;
-    border-color: #004085 !important;
-}
+        .btn-primary:hover {
+            background-color: #0056b3 !important;
+            border-color: #004085 !important;
+        }
 
-.form-group {
-    margin-bottom: 1rem !important;
-}
+        .form-group {
+            margin-bottom: 1rem !important;
+        }
 
-.bg-dark .text-white {
-    color: #e9ecef !important; /* Màu chữ sáng hơn để dễ đọc */
-}
-@media (max-width: 576px) {
-    .custom-select{
-        padding-bottom: 10px
-    }
-    .cs-row{
-        margin-left: -25px;
-    }
-    .cs-sort {
-        margin-left: 25px
-    }
-}
+        .bg-dark .text-white {
+            color: #e9ecef !important; /* Màu chữ sáng hơn để dễ đọc */
+        }
+        @media (max-width: 576px) {
+            .custom-select{
+                padding-bottom: 10px
+            }
+            .cs-row{
+                margin-left: -25px;
+            }
+            .cs-sort {
+                margin-left: 25px
+            }
+        }
                 </style>
 
 

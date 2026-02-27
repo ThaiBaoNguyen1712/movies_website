@@ -45,7 +45,7 @@
                    height: 100%;
                    border: 0;
                }
-           </style>
+           </style> 
             <div class="video-container">
                {!! $episode->link !!}
             </div>

@@ -1,0 +1,203 @@
+/* Performance Optimization - Hardware Acceleration */
+* {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+}
+
+html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    -webkit-overflow-scrolling: touch;
+}
+
+/* GPU Acceleration cho các element tương tác */
+.navbar-collapse,
+.dropdown-menu,
+#search-form,
+#halim,
+#mobile-search-form,
+#result,
+#result-mobile,
+.owl-carousel,
+.grid-item img,
+.halim-item img {
+    -webkit-transform: translateZ(0);
+    -moz-transform: translateZ(0);
+    -ms-transform: translateZ(0);
+    -o-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    will-change: transform;
+}
+
+/* Smooth transitions */
+.navbar-collapse,
+#search-form,
+#mobile-search-form {
+    -webkit-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    -moz-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Tối ưu scroll */
+.navbar-collapse,
+#result,
+#result-mobile {
+    -webkit-overflow-scrolling: touch;
+    overflow-scrolling: touch;
+}
+
+/* Giảm reflow/repaint */
+img {
+    pointer-events: none;
+}
+
+a img {
+    pointer-events: auto;
+}
+
+/* Touch feedback nhanh hơn */
+button,
+a,
+.navbar-toggle {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* Passive scroll listeners */
+body,
+html {
+    touch-action: manipulation;
+}
+
+
+
+@media (max-width: 768px) {
+    .container {
+        padding-left: 5px !important;
+        padding-right: 5px !important;
+    }
+    html, body {
+        overflow-x: hidden !important;
+    }
+    #wrapper {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    /* CHỈ BỎ PADDING CỦA COL TRONG MAIN-CONTENTS */
+    #main-contents {
+        padding-left: 5px !important;
+        padding-right: 5px !important;
+    }
+
+    /* Video container cách mép một chút */
+    .video-container {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        border-radius: 0 !important;
+    }
+
+    /* GIỮ LẠI PADDING cho nội dung */
+    .halim-panel-filter,
+    .button-watch,
+    .title-block,
+    .entry-content,
+    #halim-list-server,
+    .related-movies,
+    .halim-item,
+    .section-bar,
+    .movie-info,
+    article.post,
+    .widget {
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+    }
+
+    /* Sidebar giữ padding */
+    .col-xs-12.col-sm-12.col-md-4 .widget,
+    .col-xs-12.col-sm-12.col-md-4 .section-bar {
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+    }
+
+    body {
+    -ms-overflow-style: none !important ;  /* IE, Edge */
+    scrollbar-width: none !important ;     /* Firefox */
+  }
+  body::-webkit-scrollbar {
+    display: none !important ;             /* Chrome, Safari */
+  }
+  
+}
+
+/* Mobile Search Form */
+#mobile-search-form {
+    padding: 15px;
+    background: #12171b;
+}
+
+#mobile-search-form .form-timkiem {
+    margin: 0;
+}
+
+#mobile-search-form .input-group {
+    width: 100%;
+}
+
+#mobile-search-form .form-control {
+    background: #1b2d3c;
+    border: 1px solid #2d3e50;
+    color: #fff;
+    padding: 10px 15px;
+    border-radius: 20px 0 0 20px;
+}
+
+#mobile-search-form .form-control:focus {
+    border-color: #4d7496;
+    outline: none;
+}
+
+#mobile-search-form .btn-primary {
+    background: #1b2d3c;
+    border: 1px solid #2d3e50;
+    border-left: none;
+    border-radius: 0 20px 20px 0;
+    padding: 10px 15px;
+}
+
+#mobile-search-form .btn-primary:hover {
+    background: #2d3e50;
+}
+
+#result-mobile {
+    position: relative;
+    z-index: 9999;
+    background: #1b2d3c;
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 5px;
+}
+
+#result-mobile li {
+    list-style: none;
+    padding: 8px;
+    border-bottom: 1px solid #2d3e50;
+}
+
+#result-mobile li:last-child {
+    border-bottom: none;
+}
+
+#result-mobile img {
+    margin-right: 10px;
+    border-radius: 3px;
+}
